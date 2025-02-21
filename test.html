@@ -27,20 +27,20 @@
             margin-bottom: 20px;
             color: #d9534f;
         }
-        #test-container {
+        #test-container, #numbers-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
             gap: 15px;
             max-width: 500px;
             margin: auto;
         }
-        .image-box {
+        .image-box, .number-container {
             background: white;
             padding: 10px;
             border-radius: 10px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
-        .image-box img {
+        .image-box img, .number-container img {
             width: 100px;
             height: 100px;
             object-fit: cover;
@@ -54,23 +54,6 @@
             margin-top: 5px;
             color: #333;
         }
-        #numbers-container {
-            display: none;
-            margin-top: 20px;
-        }
-        .number-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin: 10px 0;
-        }
-        .number-container img {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 5px;
-        }
         .number-input {
             padding: 8px;
             width: 60px;
@@ -80,13 +63,21 @@
             border-radius: 5px;
             transition: 0.3s;
         }
-        .number-input.correct {
-            background-color: lightgreen;
-            border-color: green;
+        .correct { background-color: lightgreen; border-color: green; }
+        .wrong { background-color: salmon; border-color: red; }
+        #refresh-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
         }
-        .number-input.wrong {
-            background-color: salmon;
-            border-color: red;
+        #refresh-button:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
@@ -96,6 +87,7 @@
     <p id="timer">Kalan Süre: -s</p>
     <div id="test-container"></div>
     <div id="numbers-container"></div>
+    <button id="refresh-button">Yenile</button>
 
     <script>
         const images = [
@@ -128,17 +120,18 @@
             "https://icons.iconarchive.com/icons/iconleak/cerulean/256/science-chemistry-icon.png",
             "https://icons.iconarchive.com/icons/iconleak/cerulean/256/dvd-icon.png"
         ];
-
-        let timer;
-        let timeRemaining = 20; 
-        let imageNumbers = [];
-        let step = 1;
-        let usedImages = []; // Kulanılan resimleri saklamak için
-
-        function getRandomNumber(min, max) {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
+        let timer, timeRemaining, step, imageNumbers, usedImages;
+        
+        function resetGame() {
+            clearInterval(timer);
+            timeRemaining = 20;
+            step = 1;
+            imageNumbers = [];
+            usedImages = [];
+            document.getElementById("numbers-container").style.display = "none";
+            showImages();
         }
-
+        
         function shuffle(array) {
             return array.sort(() => Math.random() - 0.5);
         }
@@ -162,51 +155,39 @@
 
         function showImages() {
             const container = document.getElementById("test-container");
-            container.innerHTML = ""; 
+            container.innerHTML = "";
             
-            // Kullandığımız resimleri şimdilik saklayalım
-            const shuffledImages = shuffle(images).filter(item => !usedImages.includes(item)).slice(0, 4); 
+            const shuffledImages = shuffle(images).slice(0, 4);
             shuffledImages.forEach(item => {
-                const randomNumber = getRandomNumber(10, 99);
+                const randomNumber = Math.floor(Math.random() * 90) + 10;
                 imageNumbers.push({ img: item, number: randomNumber });
                 const div = document.createElement("div");
                 div.classList.add("image-box");
-                div.innerHTML = `
-                    <img src="${item}" alt="Image">
-                    <span class="number">${randomNumber}</span>
-                `;
+                div.innerHTML = `<img src="${item}" alt="Image"><span class="number">${randomNumber}</span>`;
                 container.appendChild(div);
-                usedImages.push(item); // Kullanılan resimleri ekle
             });
-
             timer = setInterval(updateTimer, 1000);
         }
 
         function hideNumbers() {
-            const container = document.getElementById("test-container");
-            container.innerHTML = ""; 
-            showMatchingScreen(); 
+            document.getElementById("test-container").innerHTML = "";
+            showMatchingScreen();
         }
 
         function showMatchingScreen() {
             const numbersContainer = document.getElementById("numbers-container");
-            numbersContainer.innerHTML = ""; 
-            numbersContainer.style.display = "block"; 
-
-            const shuffledNumbers = shuffle(imageNumbers).slice(0, 4);  
-
+            numbersContainer.innerHTML = "";
+            numbersContainer.style.display = "block";
+            
+            const shuffledNumbers = shuffle(imageNumbers);
             shuffledNumbers.forEach(item => {
                 const div = document.createElement("div");
                 div.classList.add("number-container");
-                div.innerHTML = `
-                    <img src="${item.img}" alt="Image">
-                    <input type="text" placeholder="Sayıyı girin" data-number="${item.number}" class="number-input">
-                `;
+                div.innerHTML = `<img src="${item.img}" alt="Image"> <input type="text" placeholder="Sayıyı girin" data-number="${item.number}" class="number-input">`;
                 numbersContainer.appendChild(div);
             });
-
-            const inputs = document.querySelectorAll('.number-input');
-            inputs.forEach(input => {
+            
+            document.querySelectorAll('.number-input').forEach(input => {
                 input.addEventListener('input', checkMatch);
             });
         }
@@ -215,12 +196,12 @@
             const input = event.target;
             const number = input.getAttribute("data-number");
             const value = input.value.trim();
-
             input.classList.toggle("correct", value === number.toString());
             input.classList.toggle("wrong", value !== number.toString() && value !== "");
         }
-
-        showImages();
+        
+        document.getElementById("refresh-button").addEventListener("click", resetGame);
+        resetGame();
     </script>
 </body>
 </html>
