@@ -184,24 +184,29 @@
         }
 
         function showImages() {
-            const container = document.getElementById("test-container");
-            container.innerHTML = ""; 
+    const container = document.getElementById("test-container");
+    container.innerHTML = ""; 
 
-            const shuffledImages = shuffle(images).slice(0, 4); 
-            shuffledImages.forEach(item => {
-                const randomNumber = getRandomNumber(10, 99);
-                imageNumbers.push({ img: item, number: randomNumber });
-                const div = document.createElement("div");
-                div.classList.add("image-box");
-                div.innerHTML = `
-                    <img src="${item}" alt="Image">
-                    <span class="number">${randomNumber}</span>
-                `;
-                container.appendChild(div);
-            });
+    const shuffledImages = shuffle(images).filter(img => !usedImages.includes(img)).slice(0, 4); // Daha önce kullanılmayanları al
 
-            timer = setInterval(updateTimer, 1000);
-        }
+    usedImages = [...shuffledImages]; // Kullanılan resimleri sakla
+    imageNumbers = []; // Önceki kayıtları temizle
+
+    shuffledImages.forEach(item => {
+        const randomNumber = getRandomNumber(10, 99);
+        imageNumbers.push({ img: item, number: randomNumber });
+        const div = document.createElement("div");
+        div.classList.add("image-box");
+        div.innerHTML = `
+            <img src="${item}" alt="Image">
+            <span class="number">${randomNumber}</span>
+        `;
+        container.appendChild(div);
+    });
+
+    timer = setInterval(updateTimer, 1000);
+}
+
 
         function hideNumbers() {
             const container = document.getElementById("test-container");
@@ -210,27 +215,28 @@
         }
 
         function showMatchingScreen() {
-            const numbersContainer = document.getElementById("numbers-container");
-            numbersContainer.innerHTML = ""; 
-            numbersContainer.style.display = "block"; 
+    const numbersContainer = document.getElementById("numbers-container");
+    numbersContainer.innerHTML = ""; 
+    numbersContainer.style.display = "block"; 
 
-            const shuffledNumbers = shuffle(imageNumbers).slice(0, 4);  
+    const selectedNumbers = imageNumbers.filter(item => usedImages.includes(item.img)); // İlk aşamadaki resimleri kullan
 
-            shuffledNumbers.forEach(item => {
-                const div = document.createElement("div");
-                div.classList.add("number-container");
-                div.innerHTML = `
-                    <img src="${item.img}" alt="Image">
-                    <input type="text" placeholder="Sayıyı girin" data-number="${item.number}" class="number-input">
-                `;
-                numbersContainer.appendChild(div);
-            });
+    selectedNumbers.forEach(item => {
+        const div = document.createElement("div");
+        div.classList.add("number-container");
+        div.innerHTML = `
+            <img src="${item.img}" alt="Image">
+            <input type="text" placeholder="Sayıyı girin" data-number="${item.number}" class="number-input">
+        `;
+        numbersContainer.appendChild(div);
+    });
 
-            const inputs = document.querySelectorAll('.number-input');
-            inputs.forEach(input => {
-                input.addEventListener('input', checkMatch);
-            });
-        }
+    const inputs = document.querySelectorAll('.number-input');
+    inputs.forEach(input => {
+        input.addEventListener('input', checkMatch);
+    });
+}
+
 
         function checkMatch(event) {
             const input = event.target;
