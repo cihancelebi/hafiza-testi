@@ -115,7 +115,7 @@
     <p id="timer">Kalan Süre: -s</p>
     <div id="test-container"></div>
     <div id="numbers-container"></div>
-    <button id="resetButton">Yenile</button>
+    <button id="resetButton">Sonraki</button>
 
 
     <script>
@@ -151,7 +151,7 @@
         ];
 
         let timer;
-        let timeRemaining = 10; 
+        let timeRemaining = 20; 
         let imageNumbers = [];
         let step = 1;
         let usedImages = []; // Kulanılan resimleri saklamak için
@@ -171,7 +171,7 @@
                 clearInterval(timer);
                 if (step === 1) {
                     step = 2;
-                    timeRemaining = 10;
+                    timeRemaining = 20;
                     showImages();
                 } else {
                     hideNumbers();
