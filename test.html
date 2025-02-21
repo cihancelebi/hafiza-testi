@@ -69,7 +69,7 @@
             }
         }
 
-        // Resimleri rastgele sayılarla gösterme fonksiyonu
+        // Resimleri ve sayıları birlikte gösterme fonksiyonu
         function showImages() {
             const container = document.getElementById("test-container");
             container.innerHTML = ""; // Önceki içerikleri temizle
@@ -83,6 +83,7 @@
                 div.innerHTML = `
                     <div style="display: inline-block; margin: 10px;">
                         <img src="${item}" alt="${randomNumber}" width="100px">
+                        <span>${randomNumber}</span>
                     </div>`;
                 container.appendChild(div);
             });
