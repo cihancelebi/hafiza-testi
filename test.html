@@ -93,7 +93,7 @@
 <body>
     <h1>Kart Eşleştirme Oyunu</h1>
     <p>Kart görselleri ve sayılarını aklında tut.</p>
-    <p id="timer">Kalan Süre: 10s</p>
+    <p id="timer">Kalan Süre: -s</p>
     <div id="test-container"></div>
     <div id="numbers-container"></div>
 
@@ -130,9 +130,10 @@
         ];
 
         let timer;
-        let timeRemaining = 10; 
+        let timeRemaining = 20; 
         let imageNumbers = [];
         let step = 1;
+        let usedImages = []; // Kulanılan resimleri saklamak için
 
         function getRandomNumber(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -144,12 +145,12 @@
 
         function updateTimer() {
             const timerElement = document.getElementById("timer");
-            timerElement.textContent = `Kalan Süre: ${timeRemaining}s`;
+            timerElement.textContent = Kalan Süre: ${timeRemaining}s;
             if (timeRemaining === 0) {
                 clearInterval(timer);
                 if (step === 1) {
                     step = 2;
-                    timeRemaining = 10;
+                    timeRemaining = 20;
                     showImages();
                 } else {
                     hideNumbers();
@@ -162,18 +163,20 @@
         function showImages() {
             const container = document.getElementById("test-container");
             container.innerHTML = ""; 
-
-            const shuffledImages = shuffle(images).slice(0, 4); 
+            
+            // Kullandığımız resimleri şimdilik saklayalım
+            const shuffledImages = shuffle(images).filter(item => !usedImages.includes(item)).slice(0, 4); 
             shuffledImages.forEach(item => {
                 const randomNumber = getRandomNumber(10, 99);
                 imageNumbers.push({ img: item, number: randomNumber });
                 const div = document.createElement("div");
                 div.classList.add("image-box");
-                div.innerHTML = `
+                div.innerHTML = 
                     <img src="${item}" alt="Image">
                     <span class="number">${randomNumber}</span>
-                `;
+                ;
                 container.appendChild(div);
+                usedImages.push(item); // Kullanılan resimleri ekle
             });
 
             timer = setInterval(updateTimer, 1000);
@@ -195,10 +198,10 @@
             shuffledNumbers.forEach(item => {
                 const div = document.createElement("div");
                 div.classList.add("number-container");
-                div.innerHTML = `
+                div.innerHTML = 
                     <img src="${item.img}" alt="Image">
                     <input type="text" placeholder="Sayıyı girin" data-number="${item.number}" class="number-input">
-                `;
+                ;
                 numbersContainer.appendChild(div);
             });
 
