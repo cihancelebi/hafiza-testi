@@ -20,12 +20,16 @@
             font-size: 24px;
             margin-bottom: 20px;
         }
+        .number-container {
+            margin: 10px;
+        }
     </style>
 </head>
 <body>
 
     <div id="timer"></div> <!-- Süreyi gösterecek alan -->
     <div id="test-container"></div>
+    <div id="numbers-container" style="text-align:center; display: none;"></div> <!-- Sayılar eşleştirme için -->
 
     <script>
         const images = [
@@ -37,6 +41,8 @@
 
         let timer;
         let timeRemaining = 10; // Süreyi saniye cinsinden
+        let imageNumbers = []; // Resim ve sayı eşleşmeleri
+        let shuffledNumbers = []; // Sayıların karıştırılmış hali
 
         // Rastgele sayı üretecek fonksiyon
         function getRandomNumber(min, max) {
@@ -54,14 +60,13 @@
             timerElement.textContent = `Kalan Süre: ${timeRemaining}s`;
             if (timeRemaining === 0) {
                 clearInterval(timer);
-                const container = document.getElementById("test-container");
-                container.innerHTML = "<p>Şimdi eşleştirme yap!</p>";
+                showNumbersForMatching(); // Süre bitince sayıları göster
             } else {
                 timeRemaining--;
             }
         }
 
-        // Görselleri rastgele sayılarla gösterme fonksiyonu
+        // Resimleri rastgele sayılarla gösterme fonksiyonu
         function showImages() {
             const container = document.getElementById("test-container");
             container.innerHTML = ""; // Önceki içerikleri temizle
@@ -70,11 +75,11 @@
             const shuffledImages = shuffle(images);
             shuffledImages.forEach(item => {
                 const randomNumber = getRandomNumber(10, 99); // 10-99 arasında rastgele sayı
+                imageNumbers.push({ img: item, number: randomNumber }); // Resim ve sayı eşleştir
                 const div = document.createElement("div");
                 div.innerHTML = `
                     <div style="display: inline-block; margin: 10px;">
                         <img src="${item}" alt="${randomNumber}">
-                        <p>${randomNumber}</p>
                     </div>`;
                 container.appendChild(div);
             });
@@ -83,7 +88,46 @@
             timer = setInterval(updateTimer, 1000);
         }
 
-        // Sayfa yüklendiğinde resimleri göster
+        // Süre bittikten sonra kullanıcıya eşleştirme yapmasını istemek
+        function showNumbersForMatching() {
+            const container = document.getElementById("numbers-container");
+            container.style.display = "block"; // Sayıları görünür yap
+
+            // Sayıları ekle
+            shuffledNumbers = imageNumbers.map(item => item.number);
+            shuffledNumbers = shuffle(shuffledNumbers); // Sayıları karıştır
+
+            container.innerHTML = "<h3>Şimdi eşleştirme yapın:</h3>";
+            shuffledNumbers.forEach(number => {
+                const div = document.createElement("div");
+                div.classList.add("number-container");
+                div.innerHTML = `<input type="text" placeholder="Resim için sayıyı girin" data-number="${number}" class="number-input"> <span>${number}</span>`;
+                container.appendChild(div);
+            });
+
+            // Eşleştirme yapabilmek için gerekli kontrol
+            const inputs = document.querySelectorAll('.number-input');
+            inputs.forEach(input => {
+                input.addEventListener('input', checkMatch);
+            });
+        }
+
+        // Eşleşmeleri kontrol etme fonksiyonu
+        function checkMatch(event) {
+            const input = event.target;
+            const number = input.getAttribute("data-number");
+            const value = input.value.trim();
+
+            if (value === number.toString()) {
+                input.style.backgroundColor = "lightgreen"; // Doğru eşleşme
+            } else if (value !== "") {
+                input.style.backgroundColor = "salmon"; // Yanlış eşleşme
+            } else {
+                input.style.backgroundColor = ""; // Boşsa arka planı temizle
+            }
+        }
+
+        // Sayfada resimleri ve süreyi başlat
         showImages();
     </script>
 </body>
