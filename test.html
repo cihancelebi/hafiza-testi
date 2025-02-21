@@ -88,6 +88,25 @@
             background-color: salmon;
             border-color: red;
         }
+
+        /* Yenileme butonunun tasarımı */
+        #resetButton {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            background-color: #28a745;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Yenileme butonu hover efekti */
+        #resetButton:hover {
+            background-color: #218838; /* Daha koyu yeşil hover rengi */
+        }
+        
     </style>
 </head>
 <body>
@@ -96,6 +115,8 @@
     <p id="timer">Kalan Süre: -s</p>
     <div id="test-container"></div>
     <div id="numbers-container"></div>
+    <button id="resetButton">Yenile</button>
+
 
     <script>
         const images = [
@@ -221,6 +242,11 @@
         }
 
         showImages();
+
+        // Yenileme butonuna tıklama olayı
+            document.getElementById("resetButton").addEventListener("click", function() {
+                location.reload(); // Sayfayı yeniden yükle
+            });
     </script>
 </body>
 </html>
