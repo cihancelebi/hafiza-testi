@@ -88,17 +88,6 @@
             background-color: salmon;
             border-color: red;
         }
-
-        #reset-button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            font-size: 16px;
-            border: none;
-            background-color: #007bff;
-            color: white;
-            border-radius: 5px;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
@@ -107,8 +96,6 @@
     <p id="timer">Kalan Süre: 10s</p>
     <div id="test-container"></div>
     <div id="numbers-container"></div>
-    <button id="reset-button">Yenile</button>
-
 
     <script>
         const images = [
@@ -147,17 +134,6 @@
         let imageNumbers = [];
         let step = 1;
 
-        function resetGame() {
-            clearInterval(timer);
-            imageNumbers = []; 
-            usedImages = []; 
-            document.getElementById("numbers-container").style.display = "none";
-            document.getElementById("numbers-container").innerHTML = "";
-            step = 1;
-            timeRemaining = 20;
-            showImages();
-        }
-        
         function getRandomNumber(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
@@ -184,29 +160,24 @@
         }
 
         function showImages() {
-    const container = document.getElementById("test-container");
-    container.innerHTML = ""; 
+            const container = document.getElementById("test-container");
+            container.innerHTML = ""; 
 
-    const shuffledImages = shuffle(images).filter(img => !usedImages.includes(img)).slice(0, 4); // Daha önce kullanılmayanları al
+            const shuffledImages = shuffle(images).slice(0, 4); 
+            shuffledImages.forEach(item => {
+                const randomNumber = getRandomNumber(10, 99);
+                imageNumbers.push({ img: item, number: randomNumber });
+                const div = document.createElement("div");
+                div.classList.add("image-box");
+                div.innerHTML = `
+                    <img src="${item}" alt="Image">
+                    <span class="number">${randomNumber}</span>
+                `;
+                container.appendChild(div);
+            });
 
-    usedImages = [...shuffledImages]; // Kullanılan resimleri sakla
-    imageNumbers = []; // Önceki kayıtları temizle
-
-    shuffledImages.forEach(item => {
-        const randomNumber = getRandomNumber(10, 99);
-        imageNumbers.push({ img: item, number: randomNumber });
-        const div = document.createElement("div");
-        div.classList.add("image-box");
-        div.innerHTML = `
-            <img src="${item}" alt="Image">
-            <span class="number">${randomNumber}</span>
-        `;
-        container.appendChild(div);
-    });
-
-    timer = setInterval(updateTimer, 1000);
-}
-
+            timer = setInterval(updateTimer, 1000);
+        }
 
         function hideNumbers() {
             const container = document.getElementById("test-container");
@@ -215,28 +186,27 @@
         }
 
         function showMatchingScreen() {
-    const numbersContainer = document.getElementById("numbers-container");
-    numbersContainer.innerHTML = ""; 
-    numbersContainer.style.display = "block"; 
+            const numbersContainer = document.getElementById("numbers-container");
+            numbersContainer.innerHTML = ""; 
+            numbersContainer.style.display = "block"; 
 
-    const selectedNumbers = imageNumbers.filter(item => usedImages.includes(item.img)); // İlk aşamadaki resimleri kullan
+            const shuffledNumbers = shuffle(imageNumbers).slice(0, 4);  
 
-    selectedNumbers.forEach(item => {
-        const div = document.createElement("div");
-        div.classList.add("number-container");
-        div.innerHTML = `
-            <img src="${item.img}" alt="Image">
-            <input type="text" placeholder="Sayıyı girin" data-number="${item.number}" class="number-input">
-        `;
-        numbersContainer.appendChild(div);
-    });
+            shuffledNumbers.forEach(item => {
+                const div = document.createElement("div");
+                div.classList.add("number-container");
+                div.innerHTML = `
+                    <img src="${item.img}" alt="Image">
+                    <input type="text" placeholder="Sayıyı girin" data-number="${item.number}" class="number-input">
+                `;
+                numbersContainer.appendChild(div);
+            });
 
-    const inputs = document.querySelectorAll('.number-input');
-    inputs.forEach(input => {
-        input.addEventListener('input', checkMatch);
-    });
-}
-
+            const inputs = document.querySelectorAll('.number-input');
+            inputs.forEach(input => {
+                input.addEventListener('input', checkMatch);
+            });
+        }
 
         function checkMatch(event) {
             const input = event.target;
@@ -248,11 +218,6 @@
         }
 
         showImages();
-
-        document.getElementById("reset-button").addEventListener("click", resetGame);
-        
-        resetGame();
     </script>
-    
 </body>
 </html>
