@@ -1,0 +1,14 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 50px;
+}
+#app {
+    max-width: 600px;
+    margin: auto;
+}
+img {
+    width: 100px;
+    height: 100px;
+    margin: 10px;
+}
