@@ -63,7 +63,7 @@
             timerElement.textContent = `Kalan Süre: ${timeRemaining}s`;
             if (timeRemaining === 0) {
                 clearInterval(timer);
-                showNumbersForMatching(); // Süre bitince sayıları göster
+                hideNumbers(); // Süre bitince sayıları gizle
             } else {
                 timeRemaining--;
             }
@@ -92,7 +92,21 @@
             timer = setInterval(updateTimer, 1000);
         }
 
-        // Süre bittikten sonra kullanıcıya eşleştirme yapmasını istemek
+        // Sayıları gizlemek için fonksiyon
+        function hideNumbers() {
+            const container = document.getElementById("test-container");
+            const imagesDivs = container.querySelectorAll("div");
+            imagesDivs.forEach(div => {
+                const span = div.querySelector("span");
+                if (span) {
+                    span.style.display = "none"; // Sayıyı gizle
+                }
+            });
+
+            showNumbersForMatching(); // Eşleştirme ekranını göster
+        }
+
+        // Sayıları gizledikten sonra kullanıcıya eşleştirme yapmasını istemek
         function showNumbersForMatching() {
             const container = document.getElementById("numbers-container");
             container.style.display = "block"; // Sayıları görünür yap
