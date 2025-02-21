@@ -50,12 +50,34 @@
         #startTest:hover {
             background-color: #0056b3; /* Daha koyu mavi hover rengi */
         }
+
+        /* Yenileme butonunun tasarımı */
+        #resetButton {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            background-color: #28a745;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Yenileme butonu hover efekti */
+        #resetButton:hover {
+            background-color: #218838; /* Daha koyu yeşil hover rengi */
+        }
+
+        
     </style>
 </head>
 <body>
     <div id="app">
         <h1>İstihbarat Mülakatı</h1>
         <button id="startTest">Teste Başla</button>
+        <button id="resetButton">Yenile</button>
+
     </div>
 
     <script>
@@ -86,6 +108,11 @@
 
             startButton.addEventListener("mouseout", function() {
                 startButton.style.backgroundColor = "#007bff"; // Normal duruma geri dönme
+            });
+
+            // Yenileme butonuna tıklama olayı
+            document.getElementById("resetButton").addEventListener("click", function() {
+                location.reload(); // Sayfayı yeniden yükle
             });
         });
     </script>
