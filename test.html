@@ -133,6 +133,7 @@
         let timeRemaining = 10; 
         let imageNumbers = [];
         let step = 1;
+        let usedImages = []; // Kulanılan resimleri saklamak için
 
         function getRandomNumber(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -162,8 +163,9 @@
         function showImages() {
             const container = document.getElementById("test-container");
             container.innerHTML = ""; 
-
-            const shuffledImages = shuffle(images).slice(0, 4); 
+            
+            // Kullandığımız resimleri şimdilik saklayalım
+            const shuffledImages = shuffle(images).filter(item => !usedImages.includes(item)).slice(0, 4); 
             shuffledImages.forEach(item => {
                 const randomNumber = getRandomNumber(10, 99);
                 imageNumbers.push({ img: item, number: randomNumber });
@@ -174,6 +176,7 @@
                     <span class="number">${randomNumber}</span>
                 `;
                 container.appendChild(div);
+                usedImages.push(item); // Kullanılan resimleri ekle
             });
 
             timer = setInterval(updateTimer, 1000);
