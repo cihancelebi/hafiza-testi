@@ -83,7 +83,7 @@
                 div.innerHTML = `
                     <div style="display: inline-block; margin: 10px;">
                         <img src="${item}" alt="${randomNumber}" width="100px">
-                        <span>${randomNumber}</span>
+                        <span class="number" style="display: inline-block;">${randomNumber}</span> <!-- Sayıyı gizlemek için sınıf ekle -->
                     </div>`;
                 container.appendChild(div);
             });
@@ -95,12 +95,9 @@
         // Sayıları gizlemek için fonksiyon
         function hideNumbers() {
             const container = document.getElementById("test-container");
-            const imagesDivs = container.querySelectorAll("div");
-            imagesDivs.forEach(div => {
-                const span = div.querySelector("span");
-                if (span) {
-                    span.style.display = "none"; // Sayıyı gizle
-                }
+            const numbers = container.querySelectorAll('.number'); // Sayıları seç
+            numbers.forEach(number => {
+                number.style.display = "none"; // Sayıları gizle
             });
 
             showNumbersForMatching(); // Eşleştirme ekranını göster
