@@ -23,8 +23,10 @@
             margin-right: 10px;
             width: 80px;
         }
-        .number-container span {
-            font-size: 20px;
+        .number-container img {
+            width: 100px;
+            display: block;
+            margin: auto;
         }
     </style>
 </head>
@@ -43,105 +45,96 @@
         ];
 
         let timer;
-        let timeRemaining = 10; // Süreyi saniye cinsinden
-        let imageNumbers = []; // Resim ve sayı eşleşmeleri
-        let shuffledNumbers = []; // Sayıların karıştırılmış hali
+        let timeRemaining = 10; 
+        let imageNumbers = [];
 
-        // Rastgele sayı üretecek fonksiyon
         function getRandomNumber(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
 
-        // Diziyi karıştırma fonksiyonu
         function shuffle(array) {
             return array.sort(() => Math.random() - 0.5);
         }
 
-        // Süreyi göstermek için fonksiyon
         function updateTimer() {
             const timerElement = document.getElementById("timer");
             timerElement.textContent = `Kalan Süre: ${timeRemaining}s`;
             if (timeRemaining === 0) {
                 clearInterval(timer);
-                hideNumbers(); // Süre bitince sayıları gizle
+                hideNumbers();
             } else {
                 timeRemaining--;
             }
         }
 
-        // Resimleri ve sayıları birlikte gösterme fonksiyonu
         function showImages() {
             const container = document.getElementById("test-container");
-            container.innerHTML = ""; // Önceki içerikleri temizle
+            container.innerHTML = ""; 
 
-            // Resimleri rastgele sıraya sokarak ve her birine sayı ekleyerek göster
             const shuffledImages = shuffle(images);
             shuffledImages.forEach(item => {
-                const randomNumber = getRandomNumber(10, 99); // 10-99 arasında rastgele sayı
-                imageNumbers.push({ img: item, number: randomNumber }); // Resim ve sayı eşleştir
+                const randomNumber = getRandomNumber(10, 99);
+                imageNumbers.push({ img: item, number: randomNumber });
                 const div = document.createElement("div");
                 div.innerHTML = `
                     <div style="display: inline-block; margin: 10px;">
-                        <img src="${item}" alt="${randomNumber}" width="100px">
-                        <span class="number" style="display: inline-block;">${randomNumber}</span> <!-- Sayıyı gizlemek için sınıf ekle -->
+                        <img src="${item}" alt="Image" width="100px">
+                        <span class="number">${randomNumber}</span>
                     </div>`;
                 container.appendChild(div);
             });
 
-            // Süreyi başlat
             timer = setInterval(updateTimer, 1000);
         }
 
-        // Sayıları gizlemek için fonksiyon
         function hideNumbers() {
             const container = document.getElementById("test-container");
-            const numbers = container.querySelectorAll('.number'); // Sayıları seç
+            const numbers = container.querySelectorAll('.number'); 
             numbers.forEach(number => {
-                number.style.display = "none"; // Sayıları gizle
+                number.style.display = "none"; 
             });
 
-            showNumbersForMatching(); // Eşleştirme ekranını göster
+            showMatchingScreen(); 
         }
 
-        // Sayıları gizledikten sonra kullanıcıya eşleştirme yapmasını istemek
-        function showNumbersForMatching() {
-            const container = document.getElementById("numbers-container");
-            container.style.display = "block"; // Sayıları görünür yap
+        function showMatchingScreen() {
+            const container = document.getElementById("test-container");
+            container.innerHTML = ""; 
 
-            // Sayıları ekle
-            shuffledNumbers = imageNumbers.map(item => item.number);
-            shuffledNumbers = shuffle(shuffledNumbers); // Sayıları karıştır
+            const numbersContainer = document.getElementById("numbers-container");
+            numbersContainer.innerHTML = ""; 
+            numbersContainer.style.display = "block"; 
 
-            shuffledNumbers.forEach(number => {
+            imageNumbers.forEach(item => {
                 const div = document.createElement("div");
                 div.classList.add("number-container");
-                div.innerHTML = `<input type="text" placeholder="Resim için sayıyı girin" data-number="${number}" class="number-input"> <span>${number}</span>`;
-                container.appendChild(div);
+                div.innerHTML = `
+                    <img src="${item.img}" alt="Image">
+                    <input type="text" placeholder="Sayıyı girin" data-number="${item.number}" class="number-input">
+                `;
+                numbersContainer.appendChild(div);
             });
 
-            // Eşleştirme yapabilmek için gerekli kontrol
             const inputs = document.querySelectorAll('.number-input');
             inputs.forEach(input => {
                 input.addEventListener('input', checkMatch);
             });
         }
 
-        // Eşleşmeleri kontrol etme fonksiyonu
         function checkMatch(event) {
             const input = event.target;
             const number = input.getAttribute("data-number");
             const value = input.value.trim();
 
             if (value === number.toString()) {
-                input.style.backgroundColor = "lightgreen"; // Doğru eşleşme
+                input.style.backgroundColor = "lightgreen"; 
             } else if (value !== "") {
-                input.style.backgroundColor = "salmon"; // Yanlış eşleşme
+                input.style.backgroundColor = "salmon"; 
             } else {
-                input.style.backgroundColor = ""; // Boşsa arka planı temizle
+                input.style.backgroundColor = ""; 
             }
         }
 
-        // Sayfada resimleri ve süreyi başlat
         showImages();
     </script>
 </body>
