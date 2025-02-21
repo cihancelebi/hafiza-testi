@@ -5,28 +5,82 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hafıza Oyunu</title>
     <style>
-        #test-container {
-            display: flex;
-            justify-content: space-around;
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        #timer {
+            font-size: 20px;
+            font-weight: bold;
             margin-bottom: 20px;
+            color: #d9534f;
+        }
+        #test-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            max-width: 500px;
+            margin: auto;
+        }
+        .image-box {
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .image-box img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            display: block;
+            margin: auto;
+        }
+        .number {
+            font-size: 18px;
+            font-weight: bold;
+            display: block;
+            margin-top: 5px;
+            color: #333;
         }
         #numbers-container {
             display: none;
-            text-align: center;
             margin-top: 20px;
         }
         .number-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
             margin: 10px 0;
         }
-        .number-input {
-            padding: 5px;
-            margin-right: 10px;
-            width: 80px;
-        }
         .number-container img {
-            width: 100px;
-            display: block;
-            margin: auto;
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        .number-input {
+            padding: 8px;
+            width: 60px;
+            text-align: center;
+            font-size: 16px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        .number-input.correct {
+            background-color: lightgreen;
+            border-color: green;
+        }
+        .number-input.wrong {
+            background-color: salmon;
+            border-color: red;
         }
     </style>
 </head>
@@ -82,16 +136,16 @@
             const container = document.getElementById("test-container");
             container.innerHTML = ""; 
 
-            const shuffledImages = shuffle(images).slice(0, 4); // 4 rastgele resim seç
+            const shuffledImages = shuffle(images).slice(0, 4); 
             shuffledImages.forEach(item => {
                 const randomNumber = getRandomNumber(10, 99);
                 imageNumbers.push({ img: item, number: randomNumber });
                 const div = document.createElement("div");
+                div.classList.add("image-box");
                 div.innerHTML = `
-                    <div style="display: inline-block; margin: 10px;">
-                        <img src="${item}" alt="Image" width="100px">
-                        <span class="number">${randomNumber}</span>
-                    </div>`;
+                    <img src="${item}" alt="Image">
+                    <span class="number">${randomNumber}</span>
+                `;
                 container.appendChild(div);
             });
 
@@ -100,7 +154,7 @@
 
         function hideNumbers() {
             const container = document.getElementById("test-container");
-            container.innerHTML = ""; // Tüm içeriği temizle
+            container.innerHTML = ""; 
 
             showMatchingScreen(); 
         }
@@ -132,11 +186,13 @@
             const value = input.value.trim();
 
             if (value === number.toString()) {
-                input.style.backgroundColor = "lightgreen"; 
+                input.classList.add("correct");
+                input.classList.remove("wrong");
             } else if (value !== "") {
-                input.style.backgroundColor = "salmon"; 
+                input.classList.add("wrong");
+                input.classList.remove("correct");
             } else {
-                input.style.backgroundColor = ""; 
+                input.classList.remove("correct", "wrong");
             }
         }
 
