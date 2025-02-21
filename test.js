@@ -1,8 +1,8 @@
 const images = [
-    { img: "https://via.placeholder.com/100", text: "Elma" },
-    { img: "https://via.placeholder.com/100", text: "Araba" },
-    { img: "https://via.placeholder.com/100", text: "Ev" },
-    { img: "https://via.placeholder.com/100", text: "Bilgisayar" }
+    { img: "https://icons.iconarchive.com/icons/treetog/junior/256/folder-blue-pictures-icon.png", text: "Elma" },
+    { img: "https://icons.iconarchive.com/icons/vargas21/aquave-metal/256/Photos-icon.png", text: "Araba" },
+    { img: "https://icons.iconarchive.com/icons/ampeross/qetto-2/256/photos-icon.png", text: "Ev" },
+    { img: "https://icons.iconarchive.com/icons/zhoolego/material/256/Images-icon.png", text: "Bilgisayar" }
 ];
 function shuffle(array) {
     return array.sort(() => Math.random() - 0.5);
