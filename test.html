@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kart Eşleştirme</title>
+    <title>Hafıza Oyunu</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -14,12 +14,6 @@
         }
         h1 {
             color: #333;
-            margin-bottom: 5px;
-        }
-        #description {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 20px;
         }
         #timer {
             font-size: 20px;
@@ -43,16 +37,58 @@
         .image-box img {
             width: 100px;
             height: 100px;
+            object-fit: cover;
             display: block;
             margin: auto;
+        }
+        .number {
+            font-size: 18px;
+            font-weight: bold;
+            display: block;
+            margin-top: 5px;
+            color: #333;
+        }
+        #numbers-container {
+            display: none;
+            margin-top: 20px;
+        }
+        .number-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .number-container img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        .number-input {
+            padding: 8px;
+            width: 60px;
+            text-align: center;
+            font-size: 16px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        .number-input.correct {
+            background-color: lightgreen;
+            border-color: green;
+        }
+        .number-input.wrong {
+            background-color: salmon;
+            border-color: red;
         }
     </style>
 </head>
 <body>
-    <h1>Kart Eşleştirme</h1>
-    <p id="description">Kart görselleri ve sayılarını aklında tut. Süre bitince eşleştirmeye çalış!</p>
-    <p id="timer">Süre: 10</p>
+    <h1>Hafıza Oyunu</h1>
+    <p id="timer">Kalan Süre: 10s</p>
     <div id="test-container"></div>
+    <div id="numbers-container"></div>
 
     <script>
         const images = [
@@ -73,63 +109,94 @@
             "https://icons.iconarchive.com/icons/bokehlicia/captiva/256/cheese-icon.png"
         ];
 
-        let shuffledImages = [];
-        let assignedNumbers = {};
+        let timer;
+        let timeRemaining = 10; 
+        let imageNumbers = [];
+
+        function getRandomNumber(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
 
         function shuffle(array) {
             return array.sort(() => Math.random() - 0.5);
         }
 
-        function generateRandomNumber() {
-            return Math.floor(Math.random() * 90) + 10; // 10-99 arası sayı
-        }
-
-        function startGame() {
-            const container = document.getElementById("test-container");
-            shuffledImages = shuffle([...images]);
-            container.innerHTML = "";
-
-            shuffledImages.slice(0, 4).forEach(img => {
-                const num = generateRandomNumber();
-                assignedNumbers[img] = num;
-
-                const div = document.createElement("div");
-                div.classList.add("image-box");
-                div.innerHTML = `<img src="${img}" alt=""><p>${num}</p>`;
-                container.appendChild(div);
-            });
-
-            startTimer();
-        }
-
-        function startTimer() {
-            let timeLeft = 10;
+        function updateTimer() {
             const timerElement = document.getElementById("timer");
-
-            const countdown = setInterval(() => {
-                timeLeft--;
-                timerElement.textContent = `Süre: ${timeLeft}`;
-
-                if (timeLeft === 0) {
-                    clearInterval(countdown);
-                    showMatchingStep();
-                }
-            }, 1000);
+            timerElement.textContent = `Kalan Süre: ${timeRemaining}s`;
+            if (timeRemaining === 0) {
+                clearInterval(timer);
+                hideNumbers();
+            } else {
+                timeRemaining--;
+            }
         }
 
-        function showMatchingStep() {
+        function showImages() {
             const container = document.getElementById("test-container");
-            container.innerHTML = "";
+            container.innerHTML = ""; 
 
-            shuffledImages.slice(0, 4).forEach(img => {
+            const shuffledImages = shuffle(images).slice(0, 4); 
+            shuffledImages.forEach(item => {
+                const randomNumber = getRandomNumber(10, 99);
+                imageNumbers.push({ img: item, number: randomNumber });
                 const div = document.createElement("div");
                 div.classList.add("image-box");
-                div.innerHTML = `<img src="${img}" alt=""><input type="number" placeholder="Sayıyı gir">`;
+                div.innerHTML = `
+                    <img src="${item}" alt="Image">
+                    <span class="number">${randomNumber}</span>
+                `;
                 container.appendChild(div);
+            });
+
+            timer = setInterval(updateTimer, 1000);
+        }
+
+        function hideNumbers() {
+            const container = document.getElementById("test-container");
+            container.innerHTML = ""; 
+
+            showMatchingScreen(); 
+        }
+
+        function showMatchingScreen() {
+            const numbersContainer = document.getElementById("numbers-container");
+            numbersContainer.innerHTML = ""; 
+            numbersContainer.style.display = "block"; 
+
+            imageNumbers.forEach(item => {
+                const div = document.createElement("div");
+                div.classList.add("number-container");
+                div.innerHTML = `
+                    <img src="${item.img}" alt="Image">
+                    <input type="text" placeholder="Sayıyı girin" data-number="${item.number}" class="number-input">
+                `;
+                numbersContainer.appendChild(div);
+            });
+
+            const inputs = document.querySelectorAll('.number-input');
+            inputs.forEach(input => {
+                input.addEventListener('input', checkMatch);
             });
         }
 
-        startGame();
+        function checkMatch(event) {
+            const input = event.target;
+            const number = input.getAttribute("data-number");
+            const value = input.value.trim();
+
+            if (value === number.toString()) {
+                input.classList.add("correct");
+                input.classList.remove("wrong");
+            } else if (value !== "") {
+                input.classList.add("wrong");
+                input.classList.remove("correct");
+            } else {
+                input.classList.remove("correct", "wrong");
+            }
+        }
+
+        showImages();
     </script>
 </body>
 </html>
